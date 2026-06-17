@@ -1,0 +1,170 @@
+﻿{
+  "info": {
+    "_postman_id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+    "name": "Symfony Wishlist API — ipz242_mav",
+    "description": "CRUD-колекція для WishlistController (Symfony). Реалізовано у стилі TestController: маршрути через атрибути #[Route], дані у статичній константі DATA, без БД та авторизації. Базова URL: http://localhost:8000",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET /wishlist — Отримати весь список бажань",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/wishlist",
+          "host": ["{{base_url}}"],
+          "path": ["wishlist"]
+        },
+        "description": "Повертає статичний масив усіх елементів wishlist із константи `WishlistController::DATA`. Маршрут задано через атрибут #[Route('/wishlist', name: 'get_wishlist_items', methods: ['GET'])].\n\n**HTTP метод:** GET\n**Маршрут:** /wishlist\n**Статус:** 200 OK"
+      },
+      "response": [
+        {
+          "name": "200 OK — Список елементів wishlist",
+          "status": "OK",
+          "code": 200,
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "[\n  { \"id\": \"1\", \"name\": \"PlayStation 5\", \"description\": \"Ігрова консоль нового поколінн\", \"price\": \"500\" },\n  { \"id\": \"2\", \"name\": \"Nike Air Max\", \"description\": \"Кросівки для повсякденного носіння\", \"price\": \"120\" },\n  { \"id\": \"3\", \"name\": \"iPad Pro\", \"description\": \"Планшет для роботи та малювання\", \"price\": \"999\" },\n  { \"id\": \"4\", \"name\": \"Coffee Machine\", \"description\": \"Кавомашина для дому\", \"price\": \"250\" }\n]"
+        }
+      ]
+    },
+    {
+      "name": "GET /wishlist/{id} — Отримати елемент за ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/wishlist/1",
+          "host": ["{{base_url}}"],
+          "path": ["wishlist", "1"]
+        },
+        "description": "Повертає один елемент wishlist за ID шляхом пошуку у статичному масиві (foreach). Якщо не знайдено — повертає `new JsonResponse()` (null body) зі статусом 200, аналогічно до TestController.\n\n**HTTP метод:** GET\n**Маршрут:** /wishlist/{id}\n**Статус:** 200 OK"
+      },
+      "response": [
+        {
+          "name": "200 OK — Елемент знайдено",
+          "status": "OK",
+          "code": 200,
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{ \"id\": \"1\", \"name\": \"PlayStation 5\", \"description\": \"Ігрова консоль нового поколінн\", \"price\": \"500\" }"
+        },
+        {
+          "name": "200 OK — Елемент не знайдено (null)",
+          "status": "OK",
+          "code": 200,
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "null"
+        }
+      ]
+    },
+    {
+      "name": "POST /wishlist — Створити елемент wishlist",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"MacBook Air M3\",\n  \"description\": \"Ноутбук для навчання\",\n  \"price\": \"1200\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{base_url}}/wishlist",
+          "host": ["{{base_url}}"],
+          "path": ["wishlist"]
+        },
+        "description": "Створює новий елемент wishlist. ID генерується випадково через `rand(5, 100)`. Авторизація не потрібна (на відміну від ProductController/CategoryController).\n\n**HTTP метод:** POST\n**Маршрут:** /wishlist\n**Статус:** 201 Created"
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "status": "Created",
+          "code": 201,
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{ \"name\": \"MacBook Air M3\", \"description\": \"Ноутбук для навчання\", \"price\": \"1200\", \"id\": 42 }"
+        }
+      ]
+    },
+    {
+      "name": "PATCH /wishlist/{id} — Часткове оновлення елемента",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"price\": \"450\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{base_url}}/wishlist/1",
+          "host": ["{{base_url}}"],
+          "path": ["wishlist", "1"]
+        },
+        "description": "Оновлює лише передані поля (name, description, price) елемента wishlist. Якщо елемент не знайдено — кидає NotFoundHttpException (404).\n\n**HTTP метод:** PATCH\n**Маршрут:** /wishlist/{id}\n**Статус:** 200 OK | 404 Not Found"
+      },
+      "response": [
+        {
+          "name": "200 OK — Елемент оновлено",
+          "status": "OK",
+          "code": 200,
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{ \"id\": \"1\", \"name\": \"PlayStation 5\", \"description\": \"Ігрова консоль нового поколінн\", \"price\": \"450\" }"
+        },
+        {
+          "name": "404 Not Found",
+          "status": "Not Found",
+          "code": 404,
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"status\": 404,\n  \"title\": \"Not Found\",\n  \"detail\": \"Not Found\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "DELETE /wishlist/{id} — Видалити елемент",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/wishlist/1",
+          "host": ["{{base_url}}"],
+          "path": ["wishlist", "1"]
+        },
+        "description": "Видаляє елемент wishlist за ID. Якщо елемент не знайдено — кидає NotFoundHttpException (404).\n\n**HTTP метод:** DELETE\n**Маршрут:** /wishlist/{id}\n**Статус:** 204 No Content | 404 Not Found"
+      },
+      "response": [
+        {
+          "name": "204 No Content",
+          "status": "No Content",
+          "code": 204,
+          "header": [],
+          "body": ""
+        },
+        {
+          "name": "404 Not Found",
+          "status": "Not Found",
+          "code": 404,
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"status\": 404,\n  \"title\": \"Not Found\",\n  \"detail\": \"Not Found\"\n}"
+        }
+      ]
+    }
+  ]
+}
